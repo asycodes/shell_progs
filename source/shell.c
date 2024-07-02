@@ -110,7 +110,7 @@ int shell_usage(char **args) {
 
   // show basic instruction for the specified command
   if (strcmp(args[1], "cd") == 0) {
-    printf("Type: cd directory_name to change the current working directory of the shell\n");
+    printf("Type: cd directory_name to change the current working directory of the shells\n");
   } else if (strcmp(args[1], "help") == 0) {
     printf("Type: help for supported commands\n");
   } else if (strcmp(args[1], "exit") == 0) {

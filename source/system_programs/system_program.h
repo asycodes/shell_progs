@@ -20,6 +20,11 @@
 #include <sys/types.h>
 #include <pwd.h>
 #include <sys/utsname.h>
+#include <zlib.h>
+#include <zconf.h>
+
+
+// for backup system program
 
 #define _GNU_SOURCE
 
