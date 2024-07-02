@@ -100,7 +100,33 @@ int shell_exit(char **args) {
 }
 
 int shell_usage(char **args) {
-  printf("UNIMPLEMENTED!!!!\n");
+  // printf("UNIMPLEMENTED!!!!\n");
+ 
+  // if the argument is empty --> not valid instruction
+  if (args[1] == NULL) {
+    printf("Command not given. Type usage <command>.\n");
+    return 1;
+  }
+
+  // show basic instruction for the specified command
+  if (strcmp(args[1], "cd") == 0) {
+    printf("Type: cd directory_name to change the current working directory of the shell\n");
+  } else if (strcmp(args[1], "help") == 0) {
+    printf("Type: help for supported commands\n");
+  } else if (strcmp(args[1], "exit") == 0) {
+    printf("Type: exit to terminate the shell gracefully\n");
+  } else if (strcmp(args[1], "usage") == 0) {
+    printf("Type: usage cd/help/exit\n");
+  } else if (strcmp(args[1], "env") == 0) {
+    printf("Type: env to list all registered env variables\n");
+  } else if (strcmp(args[1], "setenv") == 0) {
+    printf("Type: setenv ENV=VALUE to set a new env variable\n");
+  } else if (strcmp(args[1], "unsetenv") == 0) {
+    printf("Type: unsetenv ENV to remove this env from the list of env variables\n");
+  } else {
+    printf("The command you gave: %s, is not part of CSEShell's builtin command\n", args[1]);
+  }
+  return 1;
 }
 
 int list_env(char **args) {
