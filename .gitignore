@@ -5,3 +5,5 @@ bin/
 .DS_Store
 archive/
 cseshell
+dspawn.log
+output_dcheck.txt
