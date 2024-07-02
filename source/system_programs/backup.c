@@ -11,7 +11,9 @@
 
 void zip_directory(const char *dir, const char *zip_filename) {
     char command[BUFFER_SIZE * 2];
-    snprintf(command, sizeof(command), "zip -r %s %s", zip_filename, dir);
+
+    // ensures that any spaces or special characters in the paths are handled correctly by the shell
+    snprintf(command, sizeof(command), "zip -r \"%s\" \"%s\"", zip_filename, dir);
     int result = system(command);
     if (result != 0) {
         fprintf(stderr, "Failed to create zip archive: %s\n", zip_filename);
