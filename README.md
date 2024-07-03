@@ -16,20 +16,30 @@ The project is organized as follows:
   - `combined.txt`, `file1.txt`, `file2.txt`, ... - Test text files.
   - `notes.pdf` - A PDF file for testing.
   - `ss.png` - An image file.
+  - `user_config` - A text file to track user's preference (language and prompt emoji)
 - `makefile` - Makefile for building the CSEShell and system programs.
 - `source/` - Source code for the shell and system programs.
   - `shell.c` and `shell.h` - Source and header files for the shell.
   - `system_programs/` - Source code and header for the system programs.
+    - `language.c` - Allows user to change language responses
+    - `vibe.c` - Allows user to change the emoji of the prompt
+    - `backup.c ` - Zips directory
+    - `sys.c` - Print out basic info of user's OS
+    - `dspawn.c` - Summons daemon process
+    - `dcheck.c` - Count of Live Daemon
+    - `find.c` - Searches for files in a directory.
+    - `ld.c` - List the contents of the curent directory.
+    - `ldr.c` - List the contents of the current directory recursively.
 
 ## Building the Project
 
-To build the CSEShell and system programs, run the following command in the root directory:
+To build the CSEShell and system programs, run the following command in the root directory of the project:
 
 ```bash
 make
 ```
 
-This will compile the source code and place the executable files in the appropriate directories.
+This will compile the source code and place the executable files in the appropriate directories, where the source code will be placed into the bin directory
 
 ## Running CSEShell
 
@@ -39,17 +49,19 @@ After building, you can start the shell by running:
 ./cseshell
 ```
 
-From there, you can execute built-in commands and any of the included system programs (e.g., `find`, `ld`, `ldr`).
+From there, you can execute built-in commands and any of the included system programs (e.g., `find`, `ld`, `ldr` etc).
 
 ## System Programs
 
-- `find.c` - Searches for files in a directory.
-- `ld.c` - List the contents of the curent directory.
-- `ldr.c` - List the contents of the current directory recursively.
+System Programs available are as seen under the System Program directory list above!
 
-Each program can be executed from the CSEShell once it is running. This starter code only allows the shell to execute a command once before exiting because `execv` replace the entire process' address space. Students need to fix this and allow the shell to prompt for more commands in Programming Assignment 1.
+## Additional features supported
 
-## Files Directory
+- Multi Language Supported (English and Malay), however its limited to 2 system programs (help and usage)
+- Improved Prompt Details, time, user.
+- User Profile, with the user_config file, the shell is able to be manipulated such that it fits to the user's preferences.
+- Better UI control for user, user can change text emoji as seen in the prompt (happy,tired,angry)
+
 
 The `files/` directory contains various text, PDF, and image files for testing the functionality of the CSEShell and its system programs.
 
