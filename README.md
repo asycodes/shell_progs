@@ -62,17 +62,9 @@ System Programs available are as seen under the System Program directory list ab
 - User Profile, with the user_config file, the shell is able to be manipulated such that it fits to the user's preferences.
 - Better UI control for user, user can change text emoji as seen in the prompt (happy,tired,angry)
 
+## Inclusivity
+- With multi language support, those (malay-speaking) with limited knowledge of english will be able to comprehend responses made by the shell.
 
-The `files/` directory contains various text, PDF, and image files for testing the functionality of the CSEShell and its system programs.
 
-## Makefile
-
-The Makefile contains rules for compiling the shell and system programs. You can clean the build by running:
-
-```bash
-make clean
-```
-
-## Source Directory
-
-Contains all the necessary source code for the shell and system programs. It is divided into the shell implementation (`shell.c`, `shell.h`) and system programs (`system_programs/`).
+## Sustainability
+- With user preferences feature, users are able to edit the shell's appearance and experience, increasing the shell's usability, discouraging them from consuming other packages/libraries/shells that might be less energy-friendly or storage-friendly
