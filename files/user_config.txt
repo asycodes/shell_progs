@@ -1,0 +1,2 @@
+prompt_emotion=happy
+lang=english

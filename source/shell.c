@@ -1,8 +1,11 @@
 #include <unistd.h>
 #include <fcntl.h>
+#include <time.h>
+#include <termios.h>
 
 // Include the shell header file for necessary constants and function declarations
 #include "shell.h"
+#include "message.h"
 
 // Function to read a command from the user input
 void read_command(char **cmd)
@@ -59,14 +62,64 @@ void read_command(char **cmd)
   cmd[i] = NULL;
 }
 
-// Function to display the shell prompt
-void type_prompt(char* cwd)
-{
-  fflush(stdout); // Flush the output buffer
-  printf("(╯°□°)╯%s> ", cwd); // Print the shell prompt
-  // printf("$$ + %s \n");  // Print the shell prompt
+//this essentially reads the user_config file to obtain preferences and 
+void read_user_config(char *emotion, char *language) {
+    FILE *file = fopen("files/user_config.txt", "r");
+    if (file != NULL) {
+        char line[MAX_LINE];
+        while (fgets(line, sizeof(line), file) != NULL) {
+            if (strncmp(line, "prompt_emotion=", 15) == 0) {
+                sscanf(line, "prompt_emotion=%s", emotion);
+            } else if (strncmp(line, "lang=", 5) == 0) {
+                sscanf(line, "lang=%s", language);
+            }
+        }
+        fclose(file);
+    }
+}
+// Function to get the current emotion
+char* get_current_emotion() {
+    static char emotion[10] = "tired";
+    static char language[10] = "english";
+    read_user_config(emotion, language);
+    return emotion;
 }
 
+//Function to get the current language
+char* get_current_language() {
+    static char emotion[10] = "tired";
+    static char language[10] = "english";
+    read_user_config(emotion, language);
+    return language;
+}
+
+//Function to get the corresponding 2 languages, and output either based on the current lang by user
+const char* get_message(const char* message_en, const char* message_ms) {
+    char* language = get_current_language();
+    if (strcmp(language, "malay") == 0) {
+        return message_ms;
+    }
+    return message_en;
+}
+
+// Function to display the shell prompt
+void type_prompt(char* cwd) {
+    fflush(stdout);
+    char* emotion = get_current_emotion();
+    char* user = getenv("USER");
+    time_t now = time(NULL);
+    struct tm *t = localtime(&now);
+    char time_str[64];
+    strftime(time_str, sizeof(time_str)-1, "%H:%M:%S", t);
+    if (strcmp(emotion, "angry") == 0) {
+        printf("(ง'̀-'́)ง %s@%s %s > ", user ? user : "user", cwd, time_str);
+    } else if (strcmp(emotion, "happy") == 0) {
+        printf("(´｡• ᵕ •｡`) %s@%s %s > ", user ? user : "user", cwd, time_str);
+    } else {
+        printf("(╯°□°)╯ %s@%s %s > ", user ? user : "user", cwd, time_str);
+
+    }
+}
 int shell_cd(char **args)
 {
   if (args[1] == NULL)
@@ -86,47 +139,41 @@ int shell_cd(char **args)
 }
 
 int shell_help(char **args) {
-  printf("Welcome to the shell help guide!\n");
-  printf("The following commands are built in:\n");
-  for (int i = 0; i < num_builtin_functions(); i++)
-  {
-    printf("  %s\n", builtin_commands[i]);
-  }
-  return 0;
+    printf("%s", get_message(WELCOME_MESSAGE_EN, WELCOME_MESSAGE_MS));
+    printf("%s", get_message(BUILTIN_COMMANDS_EN,  BUILTIN_COMMANDS_MS));
+    for (int i = 0; i < num_builtin_functions(); i++) {
+        printf("  %s\n", builtin_commands[i]);
+    }
+    return 0;
 }
 
 int shell_exit(char **args) {
   exit(0);
 }
-
 int shell_usage(char **args) {
-  // printf("UNIMPLEMENTED!!!!\n");
- 
-  // if the argument is empty --> not valid instruction
-  if (args[1] == NULL) {
-    printf("Command not given. Type usage <command>.\n");
-    return 1;
-  }
+    if (args[1] == NULL) {
+        printf("%s", get_message(COMMAND_USAGE_EN, COMMAND_USAGE_MS));
+        return 1;
+    }
 
-  // show basic instruction for the specified command
-  if (strcmp(args[1], "cd") == 0) {
-    printf("Type: cd directory_name to change the current working directory of the shells\n");
-  } else if (strcmp(args[1], "help") == 0) {
-    printf("Type: help for supported commands\n");
-  } else if (strcmp(args[1], "exit") == 0) {
-    printf("Type: exit to terminate the shell gracefully\n");
-  } else if (strcmp(args[1], "usage") == 0) {
-    printf("Type: usage cd/help/exit\n");
-  } else if (strcmp(args[1], "env") == 0) {
-    printf("Type: env to list all registered env variables\n");
-  } else if (strcmp(args[1], "setenv") == 0) {
-    printf("Type: setenv ENV=VALUE to set a new env variable\n");
-  } else if (strcmp(args[1], "unsetenv") == 0) {
-    printf("Type: unsetenv ENV to remove this env from the list of env variables\n");
-  } else {
-    printf("The command you gave: %s, is not part of CSEShell's builtin command\n", args[1]);
-  }
-  return 1;
+    if (strcmp(args[1], "cd") == 0) {
+        printf("%s", get_message(USAGE_CD_EN, USAGE_CD_MS));
+    } else if (strcmp(args[1], "help") == 0) {
+        printf("%s", get_message(USAGE_HELP_EN, USAGE_HELP_MS));
+    } else if (strcmp(args[1], "exit") == 0) {
+        printf("%s", get_message(USAGE_EXIT_EN, USAGE_EXIT_MS));
+    } else if (strcmp(args[1], "usage") == 0) {
+        printf("%s", get_message(USAGE_USAGE_EN, USAGE_USAGE_MS));
+    } else if (strcmp(args[1], "env") == 0) {
+        printf("%s", get_message(USAGE_ENV_EN, USAGE_ENV_MS));
+    } else if (strcmp(args[1], "setenv") == 0) {
+        printf("%s", get_message(USAGE_SETENV_EN, USAGE_SETENV_MS));
+    } else if (strcmp(args[1], "unsetenv") == 0) {
+        printf("%s", get_message(USAGE_UNSETENV_EN, USAGE_UNSETENV_MS));
+    } else {
+        printf("%s", get_message(COMMAND_NOT_FOUND_EN, COMMAND_NOT_FOUND_MS));
+    }
+    return 1;
 }
 
 int list_env(char **args) {
@@ -297,29 +344,26 @@ void execRC() {
     fclose(fptr);
   }
 }
-
 // The main function where the shell's execution begins
-int main(void)
-{
-  // Clear the screen
-  #ifdef _WIN32
-    system("cls"); // Windows command to clear screen
-  #else
-    system("clear"); // UNIX/Linux command to clear screen
-  #endif
+int main(void) {
+    // Clear the screen
+    #ifdef _WIN32
+        system("cls"); // Windows command to clear screen
+    #else
+        system("clear"); // UNIX/Linux command to clear screen
+    #endif
 
-  shellIntro();
+    shellIntro();
 
-  setenv("PATH", getCwdBinPath(), 1);
-  execRC();
+    setenv("PATH", getCwdBinPath(), 1);
+    execRC();
 
-    // Define an array to hold the command and its arguments
-  char *cmd[MAX_ARGS];
+    char *cmd[MAX_ARGS]; // Declare cmd array
 
-  // Infinite loop to keep the shell running
-  while(1) {
-    type_prompt(getCwdPath());     // Display the prompt
-    read_command(cmd); // Read a command from the user
-    executeCommand(cmd); // Execute the command
-  }
+    // Infinite loop to keep the shell running
+    while (1) {
+        type_prompt(getCwdPath()); // Display the prompt
+        read_command(cmd); // Read a command from the user
+        executeCommand(cmd); // Execute the command
+    }
 }
